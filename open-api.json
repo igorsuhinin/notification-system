@@ -1,0 +1,314 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Async Notification System API",
+        "description": "Generated OpenAPI spec",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "List notifications with pagination and sorting",
+                "operationId": "get_notifications.list",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of notifications per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Order of notifications (asc or desc)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated notifications list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginationResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Send a notification",
+                "operationId": "post_notifications.send",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NotificationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Notification queued",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Notification ID",
+                                            "type": "string",
+                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "body": [
+                                                    "Invalid request data: malformed JSON body"
+                                                ]
+                                            },
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "channel": [
+                                                    "Channel is not valid; it must be one of: \"email\", \"sms\", \"push\""
+                                                ],
+                                                "content": [
+                                                    "Content is required"
+                                                ],
+                                                "subject": [
+                                                    "Subject is required"
+                                                ],
+                                                "to": [
+                                                    "Recipient identifier must be a valid email address"
+                                                ]
+                                            },
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/notifications/{id}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get notification by ID",
+                "operationId": "get_notifications.show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notification found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notification not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PaginationResponse": {
+                "description": "Paginated response wrapper",
+                "required": [
+                    "total",
+                    "page",
+                    "limit",
+                    "items"
+                ],
+                "properties": {
+                    "total": {
+                        "description": "Total number of notifications",
+                        "type": "integer"
+                    },
+                    "page": {
+                        "description": "Current page number",
+                        "type": "integer"
+                    },
+                    "limit": {
+                        "description": "Items per page",
+                        "type": "integer"
+                    },
+                    "items": {
+                        "description": "List of notifications",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/NotificationResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "NotificationRequest": {
+                "description": "Notification request payload",
+                "required": [
+                    "channel",
+                    "content",
+                    "subject",
+                    "to"
+                ],
+                "properties": {
+                    "channel": {
+                        "description": "Notification channel",
+                        "type": "string",
+                        "enum": [
+                            "email",
+                            "sms",
+                            "push"
+                        ]
+                    },
+                    "content": {
+                        "description": "Notification content",
+                        "type": "string"
+                    },
+                    "subject": {
+                        "description": "Notification subject",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "Recipient identifier (email, phone, or push token)",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "NotificationResponse": {
+                "description": "Notification response payload",
+                "required": [
+                    "id",
+                    "channel",
+                    "status",
+                    "createdAt"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "UUID of the notification",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "channel": {
+                        "description": "Notification channel",
+                        "type": "string",
+                        "enum": [
+                            "email",
+                            "sms",
+                            "push"
+                        ]
+                    },
+                    "status": {
+                        "description": "Notification delivery status",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Creation timestamp (ISO 8601)",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "description": "Last update timestamp (ISO 8601)",
+                        "type": "string",
+                        "format": "date-time",
+                        "default": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Notifications",
+            "description": "Operations related to notifications system"
+        }
+    ]
+}

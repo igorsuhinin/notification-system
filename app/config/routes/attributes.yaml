@@ -1,0 +1,3 @@
+notification_controllers:
+  resource: ../../src/Notification/UI/Controller/
+  type: attribute

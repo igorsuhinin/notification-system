@@ -1,0 +1,113 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: etc/php/Dockerfile
+    container_name: php-fpm
+    volumes:
+      - ./app:/app
+      - logs_app:/var/log/symfony
+    ports:
+        - "9003:9003" # Xdebug port
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-notify}
+      DB_USER: ${DB_USER:-symfony}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_PASS : ${RABBITMQ_PASS:-adminpass}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_VHOST: ${RABBITMQ_VHOST:-%2f} # URL-encoded for root vhost
+      PHP_CS_FIXER_IGNORE_ENV: 1 # Ignore max version check for PHP CS Fixer
+      PHP_IDE_CONFIG: "serverName=Docker"
+      XDEBUG_MODE: develop,debug,coverage
+      XDEBUG_SESSION: PHPSTORM
+    depends_on:
+      - postgres
+
+  nginx:
+    build:
+      context: .
+      dockerfile: etc/nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - app
+
+  postgres:
+    image: postgres:17-alpine
+    restart: on-failure
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-notify}
+      POSTGRES_USER: ${DB_USER:-symfony}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${DB_NAME:-notify}", "-U", "${DB_USER:-symfony}"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: rabbitmq
+    restart: on-failure
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-adminpass}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:15672/api/healthchecks/node" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  grafana:
+    image: grafana/grafana:11.1.13-ubuntu
+    container_name: grafana
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:3.5
+    user: root
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./etc/loki:/etc/loki
+      - loki_data:/loki
+      - loki_wal:/wal
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    container_name: promtail
+    restart: on-failure
+    volumes:
+      - ./etc/promtail:/etc/promtail
+      - logs_app:/var/log/symfony
+    command: -config.file=/etc/promtail/promtail-config.yaml
+
+volumes:
+  pgdata:
+  grafana_data:
+  app_data:
+  loki_data:
+  loki_wal:
+  logs_app:

@@ -1,0 +1,12 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: 'Async Notification System API'
+            description: 'Generated OpenAPI spec'
+            version: '1.0.0'
+        tags:
+            - name: 'Notifications'
+              description: 'Operations related to notifications system'
+    areas:
+        default:
+            path_patterns: ['^/api']

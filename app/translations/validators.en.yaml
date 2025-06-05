@@ -1,0 +1,14 @@
+notification:
+    channel:
+        not_blank: 'Channel is required'
+        invalid_choice: 'Channel is not valid; it must be one of: {{ choices }}'
+    content:
+        not_blank: 'Content is required'
+    subject:
+        not_blank: 'Subject is required'
+    to:
+        not_blank: 'Recipient identifier "to" is required'
+        invalid_email: 'Recipient identifier must be a valid email address'
+        invalid_phone: 'Recipient identifier must be a valid phone number'
+        push_token_too_short: 'Recipient identifier must be at least 5 characters long'
+        push_token_too_long: 'Recipient identifier must be at most 100 characters long'

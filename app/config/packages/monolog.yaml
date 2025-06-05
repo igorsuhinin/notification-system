@@ -1,0 +1,15 @@
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: /var/log/symfony/app.log
+            level: debug
+            formatter: monolog.formatter.json
+            channels: ["!event"]
+
+        filtered_event:
+            type: stream
+            path: /var/log/symfony/event.log
+            level: debug
+            formatter: monolog.formatter.json
+            channels: ["event"]

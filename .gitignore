@@ -1,0 +1,14 @@
+/.env
+
+/app/vendor/
+/app/var/
+/app/.env
+/app/.env.local
+/app/.env.*.local
+/app/.phpunit.result.cache
+/app/public/bundles/
+
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,10 @@
+framework:
+    messenger:
+        default_bus: messenger.bus.default
+        transports:
+            async: 'test://?intercept=false'
+            failed:
+                dsn: 'doctrine://default?queue_name=failed'
+        failure_transport: failed
+        routing:
+            App\Notification\Application\Command\SendNotificationCommand: async
