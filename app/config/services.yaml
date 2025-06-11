@@ -14,32 +14,31 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    App\:
+    NotificationSystem\:
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
+            - '../src/Domain/Notification/Entity/'
             - '../src/Kernel.php'
 
-    App\Notification\UI\Controller\:
-        resource: '../src/Notification/UI/Controller/'
+    NotificationSystem\UI\Notification\Controller\:
+        resource: '../src/UI/Notification/Controller/'
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Notification\Application\Listener\NotificationSendRequestedEventListener:
+    NotificationSystem\Application\Notification\Listener\NotificationSendRequestedEventListener:
         arguments:
             $channels: !tagged_iterator notification.channel
 
-    App\Notification\Infrastructure\ChannelSender\StubEmailChannelSender:
+    NotificationSystem\Infrastructure\Notification\ChannelSender\StubEmailChannelSender:
         tags: ['notification.channel']
 
-    App\Notification\Infrastructure\ChannelSender\StubSmsChannelSender:
+    NotificationSystem\Infrastructure\Notification\ChannelSender\StubSmsChannelSender:
         tags: ['notification.channel']
 
-    App\Notification\Domain\Contract\NotificationRepositoryInterface:
-        alias: App\Notification\Infrastructure\Repository\DoctrineNotificationRepository
+    NotificationSystem\Domain\Notification\Contract\NotificationRepositoryInterface:
+        alias: NotificationSystem\Infrastructure\Notification\Repository\DoctrineNotificationRepository
 
-    App\Notification\Application\Contract\RecipientToProviderInterface:
-        alias: App\Notification\Application\Provider\RecipientToProvider
+    NotificationSystem\Application\Notification\Contract\RecipientToProviderInterface:
+        alias: NotificationSystem\Application\Notification\Provider\RecipientToProvider

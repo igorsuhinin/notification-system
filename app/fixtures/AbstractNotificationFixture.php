@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\DataFixtures;
+namespace NotificationSystem\DataFixtures;
 
-use App\Notification\Domain\Factory\NotificationFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use NotificationSystem\Domain\Notification\Factory\NotificationFactory;
 
 abstract class AbstractNotificationFixture extends Fixture
 {

@@ -7,4 +7,4 @@ framework:
                 dsn: 'doctrine://default?queue_name=failed'
         failure_transport: failed
         routing:
-            App\Notification\Application\Command\SendNotificationCommand: async
+            NotificationSystem\Application\Notification\Command\SendNotificationCommand: async

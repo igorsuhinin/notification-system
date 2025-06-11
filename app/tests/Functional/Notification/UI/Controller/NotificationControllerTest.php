@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Notification\UI\Controller;
+namespace NotificationSystem\Tests\Functional\Notification\UI\Controller;
 
-use App\DataFixtures\NotificationFixedFixture;
-use App\DataFixtures\NotificationRandomFixture;
-use App\Notification\Domain\Contract\NotificationRepositoryInterface;
-use App\Notification\Domain\Enum\NotificationStatusEnum;
+use NotificationSystem\DataFixtures\NotificationFixedFixture;
+use NotificationSystem\DataFixtures\NotificationRandomFixture;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use NotificationSystem\Application\Notification\Contract\RecipientToProviderInterface;
+use NotificationSystem\Domain\Notification\Contract\NotificationRepositoryInterface;
+use NotificationSystem\Domain\Notification\Enum\NotificationStatusEnum;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
-use App\Notification\Application\Contract\RecipientToProviderInterface;
 
 final class NotificationControllerTest extends WebTestCase
 {
@@ -30,9 +30,9 @@ final class NotificationControllerTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->client = static::createClient();
+        $this->client = self::createClient();
 
-        $container = static::getContainer();
+        $container = self::getContainer();
 
         $this->entityManager = $container->get(EntityManagerInterface::class);
         assert($this->entityManager instanceof EntityManagerInterface);

@@ -45,13 +45,13 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "NotificationSystem\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/",
-            "App\\DataFixtures\\": "fixtures/"
+            "NotificationSystem\\Tests\\": "tests/",
+            "NotificationSystem\\DataFixtures\\": "fixtures/"
         }
     },
     "replace": {
