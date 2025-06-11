@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DataFixtures;
+namespace NotificationSystem\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory as FakerFactory;
